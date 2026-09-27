@@ -1,2 +1,5 @@
 Started Emulator
-Inst NR: 0, Address: 0x0100, Opcode: 0x00, Desc: Unknown or unimplemented opcode
+Inst NR: 0, Address: 0x0100, Opcode: 0x00, Desc: NOP
+Inst NR: 1, Address: 0x0101, Opcode: 0xC3, Desc: JP a16
+Inst NR: 2, Address: 0x0150, Opcode: 0xC3, Desc: JP a16
+Inst NR: 3, Address: 0x020C, Opcode: 0xAF, Desc: Unknown or unimplemented opcode

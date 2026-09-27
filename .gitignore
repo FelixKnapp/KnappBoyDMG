@@ -1,4 +1,4 @@
 saves/
 .vscode/
 bin/
-debug/
+debug_dir/

@@ -45,4 +45,10 @@ public:
     uint16_t emulate_inst();
     bool emulate_inst_debug();
 
+    // helper functions
+
+    // fetch 8 bit integer immediate value, increments PC by 1 in the process
+    uint8_t fetch_byte();
+    // fetch 16 bit integer immediate value, increments PC by 2 in the process
+    uint16_t fetch_word();
 };
