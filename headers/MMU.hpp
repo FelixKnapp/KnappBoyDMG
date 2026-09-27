@@ -15,16 +15,8 @@ public:
     virtual void write(uint16_t address, uint8_t value) = 0;
 };
 
-size_t get_ram_size(uint8_t ram_type) {
-    switch (ram_type) 
-    {
-        case 0x02: return 0x2000;
-        case 0x03: return 0x8000;
-        case 0x04: return 0x20000;
-        case 0x05: return 0x10000;
-    }
-    return 0x00;
-}
+size_t get_ram_size(uint8_t ram_type);
+std::unique_ptr<Cartridge> create_cartridge(std::vector<uint8_t> rom);
 
 class ROM_ONLY : public Cartridge {
 std::vector<uint8_t> rom;
@@ -42,23 +34,6 @@ public:
         
     }
 };
-
-std::unique_ptr<Cartridge> create_cartridge(std::vector<uint8_t> rom) {
-    uint8_t mbc_type = rom.at(0x147);
-    uint8_t ram_type = rom.at(0x149);
-    size_t ram_size = get_ram_size(ram_type);
-
-    switch(mbc_type) 
-    {
-        case 0x00: // ROM only
-            SDL_Log("Rom only mode activated.\n");
-            return std::make_unique<ROM_ONLY>(std::move(rom));
-
-        default:
-            SDL_Log("Unimplemented MBC-Type: 0x%02X.\nStopping Emulator\n");
-            return nullptr;
-    }
-}
 
 class MBC1 : public Cartridge {
 
@@ -89,6 +64,10 @@ class MMU {
     uint8_t ie_register{0};
 
     std::unique_ptr<Cartridge> cartridge;
+
+
+    uint8_t action_key = 0xFF;              // start, select, a, b
+    uint8_t direction_key = 0xFF;           // up, down, left, right
     
 public:
     MMU() {
@@ -114,6 +93,14 @@ public:
         return cartridge.get();
     }
 
+    uint8_t read_input() {
+        uint8_t joypad_reg = io[0xFF00];
+        uint8_t result = joypad_reg | 0x0F;        // lower 4 bits to 1
+        if(!(joypad_reg & (1 << 4))) result &= direction_key;
+        if(!(joypad_reg & (1 << 5))) result &= action_key;
+        return result;
+    }
+
     uint8_t read(uint16_t address) {
         if (address < 0x8000 || (address >= 0xA000 && address < 0xC000)) {
             if(cartridge) return cartridge->read(address);
@@ -133,6 +120,9 @@ public:
         } 
         else if (address < 0xFF00) {
             return 0xFF; // Unusable
+        }
+        else if (address == 0xFF00) {
+            return read_input();
         }
         else if (address == 0xFF0F) {
             return io[0x0F] | 0xE0; // IME (interrupt flag)
@@ -184,5 +174,22 @@ public:
             ie_register = value;
         }
         return;
+    }
+
+    void handle_input(int key_bit, bool is_action, bool is_pressed) {
+        const static int interrupt_reg_address = 0xFF0F;
+        uint8_t& matrix = is_action ? action_key : direction_key;
+        bool was_pressed = !(matrix & (1 << key_bit));
+
+        if (is_pressed) {
+            matrix &= ~(1 << key_bit);
+            
+            if (!was_pressed) {
+                uint8_t interrupt_reg_value = read(interrupt_reg_address);
+                write(interrupt_reg_address, interrupt_reg_value | (1 << 4));
+            }
+        } else {
+            matrix |= (1 << key_bit);
+        }
     }
 };

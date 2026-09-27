@@ -6,6 +6,18 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
 
+#define A_BUTTON_SDL        SDLK_O
+#define B_BUTTON_SDL        SDLK_P
+#define SELECT_BUTTON_SDL   SDLK_RETURN
+#define START_BUTTON_SDL    SDLK_I
+
+#define RIGHT_BUTTON_SDL    SDLK_D
+#define LEFT_BUTTON_SDL     SDLK_A
+#define UP_BUTTON_SDL       SDLK_W
+#define DOWN_BUTTON_SDL     SDLK_S
+
+
+
 typedef struct{
     SDL_Window*         window;
     SDL_Renderer*       renderer;
@@ -125,7 +137,32 @@ void handle_input(class Gameboy* gb) {
                     case SDLK_ESCAPE:
                         gb->state = STOPPED;
                         break;
+                    
+                    case RIGHT_BUTTON_SDL: gb->mmu.handle_input(0, false, is_pressed);  break;
+                    case LEFT_BUTTON_SDL: gb->mmu.handle_input(1, false, is_pressed);   break;
+                    case UP_BUTTON_SDL: gb->mmu.handle_input(2, false, is_pressed);     break;
+                    case DOWN_BUTTON_SDL: gb->mmu.handle_input(3, false, is_pressed);   break;
 
+                    case A_BUTTON_SDL: gb->mmu.handle_input(0, true, is_pressed);       break;
+                    case B_BUTTON_SDL: gb->mmu.handle_input(1, true, is_pressed);       break;
+                    case SELECT_BUTTON_SDL: gb->mmu.handle_input(2, true, is_pressed);  break;
+                    case START_BUTTON_SDL: gb->mmu.handle_input(3, true, is_pressed);   break;
+                }
+                break;
+            }
+            case SDL_EVENT_KEY_UP: {
+                bool is_pressed = false;
+                switch (event.key.key) 
+                {
+                    case RIGHT_BUTTON_SDL: gb->mmu.handle_input(0, false, is_pressed);  break;
+                    case LEFT_BUTTON_SDL: gb->mmu.handle_input(1, false, is_pressed);   break;
+                    case UP_BUTTON_SDL: gb->mmu.handle_input(2, false, is_pressed);     break;
+                    case DOWN_BUTTON_SDL: gb->mmu.handle_input(3, false, is_pressed);   break;
+
+                    case A_BUTTON_SDL: gb->mmu.handle_input(0, true, is_pressed);       break;
+                    case B_BUTTON_SDL: gb->mmu.handle_input(1, true, is_pressed);       break;
+                    case SELECT_BUTTON_SDL: gb->mmu.handle_input(2, true, is_pressed);  break;
+                    case START_BUTTON_SDL: gb->mmu.handle_input(3, true, is_pressed);   break;
                 }
                 break;
             }
@@ -139,7 +176,9 @@ void end_cleanup(sdl_t sdl) {
     SDL_Quit();
 }
 
+
 int main(int argc, char** argv) {
+    std::string debug_path = "debug_dir/debug.txt";
     sdl_t sdl;
     config_t config;
     class Gameboy gb;
@@ -156,7 +195,6 @@ int main(int argc, char** argv) {
 
     if(!init_sdl(&sdl, config)) {
         SDL_Log("Couldnt initialize SDL, aborting\n");
-        end_cleanup(sdl);
         exit(EXIT_FAILURE);
     }
 
@@ -166,14 +204,33 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
+    if(!gb.open_debug_file(debug_path)) {
+        SDL_Log("Couldnt open debug file, aborting\n");
+        end_cleanup(sdl);
+        exit(EXIT_FAILURE);
+    }
 
     clear_screen(sdl);
     // main emulator loop
     while(gb.state != STOPPED) {
         handle_input(&gb);
         if(gb.state == PAUSED) continue;
-
+        
+        for(size_t frame_cycles = 0; frame_cycles < 70224; ) {
+            frame_cycles += gb.emulate_inst();
+            #ifdef DEBUG
+            if(!gb.emulate_inst_debug()) {
+                goto end_success;
+            }
+            #endif
+        } 
     }
+    goto end_success;
+
+    end_success:
+    fclose(gb.debug_output);
+    end_cleanup(sdl);
+    SDL_Log("Closed Debug File\n");
 
     return 0;
 }

@@ -12,10 +12,10 @@ all:
 
 debug:
 	mkdir -p bin
-	mkdir -p debug
+	mkdir -p debug_dir
 	g++ -o bin/gb -I $(INCLUDE_PATH) $(CPP_SRC) -DDEBUG `pkg-config --cflags --libs sdl3`
 
 clean:
 	rm -rf bin
-	rm -rf debug
+	rm -rf debug_dir
 	@echo "cleaned" 

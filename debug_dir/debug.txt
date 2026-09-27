@@ -1,0 +1,2 @@
+Started Emulator
+Inst NR: 0, Address: 0x0100, Opcode: 0x00, Desc: Unknown or unimplemented opcode
