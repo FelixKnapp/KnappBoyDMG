@@ -27,7 +27,7 @@ void Gameboy::update_timers(int cycles_passed) {
         }
         i++;
     }
-    mmu.write(0xFF04, div);
+    mmu.write_io(0xFF04, div);
 
     if (!enable_tima) return;
 
@@ -58,5 +58,5 @@ void Gameboy::update_timers(int cycles_passed) {
         }
         i++;
     }
-    mmu.write(0xFF05, tima);
+    mmu.write_io(0xFF05, tima);
 }

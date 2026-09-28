@@ -142,6 +142,14 @@ public:
         return 0x00;
     }
 
+    // use prohibited for opcode implementation
+    void write_io(uint16_t address, uint8_t value) {
+        if ((address >= 0xFF00) && (address < 0xFF80)) {
+            io[address - 0xFF00] = value;
+        }
+        
+    }
+
     void write(uint16_t address, uint8_t value) {
         if (address < 0x8000 || (address >= 0xA000 && address < 0xC000)) {
             if (cartridge) cartridge->write(address, value);
@@ -165,11 +173,11 @@ public:
             // DIV register is reset when writing
             io[address - 0xFF00] = 0;
         }
-        else if (address > 0xFF04 && address <= 0xFF07) {
-            io[address - 0xFF00] = value;
-        }
         else if (address == 0xFF0F) {
             io[0x0F] = value;
+        }
+        else if (address <= 0xFF80) {
+            io[address - 0xFF00] = value;
         }
         else if (address < 0xFFFF) {
             hram[address - 0xFF80] = value;

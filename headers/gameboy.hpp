@@ -66,6 +66,12 @@ public:
     void push_byte(uint8_t value);
     // Push 16 bit integer value to stack, decrement SP by 2 in the process
     void push_word(uint16_t value);
+    // set flag
+    void set_flag(uint8_t flag, bool condition);
+    // get flag
+    bool get_flag(uint8_t flag);
+    // Set all flags
+    void set_all_flags(bool zero, bool subtract, bool half_carry, bool carry);
     // fetch clock select mode and set enable_tima
     uint8_t get_clock_select();
 };

@@ -20,6 +20,12 @@ uint16_t Gameboy::emulate_inst() {
             // NOP      Cycles: 4       Length: 1
             return 4;
 
+        //* ____XOR____
+        case 0xAF:
+            // XOR A,A  Cycles: 4       Length: 1       Flags: 1 0 0 0
+            reg.A ^= reg.A;
+            set_all_flags(true, false, false, false);
+            return 4;
         
         //* ____JP____
         case 0xC3: {
