@@ -16,6 +16,7 @@
 #define UP_BUTTON_SDL       SDLK_W
 #define DOWN_BUTTON_SDL     SDLK_S
 
+const double TARGET_FRAME_MS = 1000.0 / 59.73;
 
 
 typedef struct{
@@ -216,21 +217,36 @@ int main(int argc, char** argv) {
         handle_input(&gb);
         if(gb.state == PAUSED) continue;
         
+        uint64_t start_frame_time = SDL_GetPerformanceCounter();
+
         for(size_t frame_cycles = 0; frame_cycles < 70224; ) {
-            frame_cycles += gb.emulate_inst();
+            uint8_t inst_cycles = gb.emulate_inst();
             #ifdef DEBUG
             if(!gb.emulate_inst_debug()) {
                 goto end_success;
             }
             #endif
-        } 
+            gb.update_timers(inst_cycles);
+            frame_cycles += inst_cycles;
+        }
+
+        uint64_t end_frame_time = SDL_GetPerformanceCounter();
+
+        double elapsed_time = (double)((end_frame_time - start_frame_time) * 1000) / SDL_GetPerformanceFrequency();
+        double waited_time = TARGET_FRAME_MS - elapsed_time;
+
+        if (elapsed_time < TARGET_FRAME_MS) {
+            SDL_Delay((uint32_t)(waited_time));
+        }
     }
     goto end_success;
 
     end_success:
     fclose(gb.debug_output);
     end_cleanup(sdl);
+    #ifdef DEBUG
     SDL_Log("Closed Debug File\n");
+    #endif
 
     return 0;
 }

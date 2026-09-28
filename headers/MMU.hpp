@@ -147,7 +147,7 @@ public:
             if (cartridge) cartridge->write(address, value);
         } 
         else if (address < 0xA000) {
-            vram[address & 0x1FFF] = value; // Verwende Maskierung
+            vram[address & 0x1FFF] = value;
         } 
         else if (address < 0xE000) {
             wram[address - 0xC000] = value;
@@ -161,7 +161,11 @@ public:
         else if (address < 0xFF00) {
             // Unusable
         } 
-        else if (address >= 0xFF04 && address <= 0xFF07) {
+        else if (address == 0xFF04) {
+            // DIV register is reset when writing
+            io[address - 0xFF00] = 0;
+        }
+        else if (address > 0xFF04 && address <= 0xFF07) {
             io[address - 0xFF00] = value;
         }
         else if (address == 0xFF0F) {
@@ -170,7 +174,7 @@ public:
         else if (address < 0xFFFF) {
             hram[address - 0xFF80] = value;
         } 
-        else if (address == 0xFFFF){ // 0xFFFF
+        else if (address == 0xFFFF) {
             ie_register = value;
         }
         return;

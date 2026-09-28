@@ -25,6 +25,10 @@ class Gameboy {
 
     bool prefixed{false};
 
+    size_t cylces_intern_tima{0};
+    size_t cylces_intern_div{0};
+    bool enable_tima{false};
+
 public:
     bool open_debug_file(std::string debug_output_path) {
         debug_output = fopen(debug_output_path.c_str(), "wb");
@@ -40,15 +44,22 @@ public:
     class MMU mmu;
     state_t state{RUNNING};
 
+
+
     // functions
 
     uint16_t emulate_inst();
     bool emulate_inst_debug();
 
+    void update_timers(int cycles_passed);
+    
+    
     // helper functions
 
     // fetch 8 bit integer immediate value, increments PC by 1 in the process
     uint8_t fetch_byte();
     // fetch 16 bit integer immediate value, increments PC by 2 in the process
     uint16_t fetch_word();
+    // fetch clock select mode and set enable_tima
+    uint8_t get_clock_select();
 };
