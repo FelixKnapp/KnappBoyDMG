@@ -52,6 +52,8 @@ public:
     bool emulate_inst_debug();
 
     void update_timers(int cycles_passed);
+
+    int handle_interrupt();
     
     
     // helper functions
@@ -60,6 +62,10 @@ public:
     uint8_t fetch_byte();
     // fetch 16 bit integer immediate value, increments PC by 2 in the process
     uint16_t fetch_word();
+    // Push 8 bit integer value to stack, decrement SP by 1 in the process
+    void push_byte(uint8_t value);
+    // Push 16 bit integer value to stack, decrement SP by 2 in the process
+    void push_word(uint16_t value);
     // fetch clock select mode and set enable_tima
     uint8_t get_clock_select();
 };

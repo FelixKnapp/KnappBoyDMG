@@ -101,6 +101,7 @@ bool init_gameboy(class Gameboy* gb, char* rom_name) {
     gb->mmu.load_cartridge(std::move(cartridge));
 
     gb->reg.PC = entry_point;
+    gb->reg.SP = 0xFFFE;
     return true;
 }
 
@@ -220,7 +221,9 @@ int main(int argc, char** argv) {
         uint64_t start_frame_time = SDL_GetPerformanceCounter();
 
         for(size_t frame_cycles = 0; frame_cycles < 70224; ) {
-            uint8_t inst_cycles = gb.emulate_inst();
+            uint8_t inst_cycles = 0;
+            inst_cycles += gb.handle_interrupt(); 
+            inst_cycles += gb.emulate_inst();
             #ifdef DEBUG
             if(!gb.emulate_inst_debug()) {
                 goto end_success;
