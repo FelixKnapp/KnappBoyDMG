@@ -4,8 +4,6 @@ bool Gameboy::emulate_inst_debug() {
 
     fprintf(debug_output, "Inst NR: %05d, Address: 0x%04X, Opcode: 0x%02X, Desc: ", debug_lines++, address, opcode);
 
-    if( debug_lines == 50000) return false;
-
     switch(opcode) 
     {
         // MISC

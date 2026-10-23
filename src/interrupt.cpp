@@ -1,12 +1,12 @@
 #include <gameboy.hpp>
 
 typedef enum {
-    VBLANK = 0x40,
-    LCD    = 0x48,
-    TIMER  = 0x50,
-    SERIAL = 0x58,
-    JOYPAD = 0x60,
-    NONE   = 0x100
+    VBLANK_INTERRUPT = 0x40,
+    LCD              = 0x48,
+    TIMER            = 0x50,
+    SERIAL           = 0x58,
+    JOYPAD           = 0x60,
+    NONE             = 0x100
 } Innterrupt_t;
 
 int Gameboy::handle_interrupt() {
@@ -29,7 +29,7 @@ int Gameboy::handle_interrupt() {
 
     if(vblank) {
         fprintf(debug_output, "VBLANK\n");
-        interrupt = VBLANK;
+        interrupt = VBLANK_INTERRUPT;
         reg_IF &= ~0b1;
     } else if(lcd) {
         fprintf(debug_output, "LCD\n");

@@ -16,6 +16,9 @@
 #define UP_BUTTON_SDL       SDLK_W
 #define DOWN_BUTTON_SDL     SDLK_S
 
+#define SCREEN_WIDTH        160
+#define SCREEN_HEIGHT       144
+
 const double TARGET_FRAME_MS = 1000.0 / 59.73;
 
 
@@ -23,6 +26,7 @@ typedef struct{
     SDL_Window*         window;
     SDL_Renderer*       renderer;
     SDL_AudioSpec       want, have;
+    SDL_Texture*        texture;
     SDL_AudioDeviceID   dev;
 } sdl_t;
 
@@ -35,7 +39,7 @@ typedef struct{
 void set_configs(config_t* config) {
     config->window_width = 256;
     config->window_height = 224;
-    std::cout << "Please Enter the scale Factor (Original Resolution: 256x224): ";
+    std::cout << "Please Enter the scale Factor (Original Resolution: 160x144): ";
     scanf("%hhd", &config->scale_factor);
 }
 
@@ -55,6 +59,19 @@ bool init_sdl(sdl_t* sdl, config_t config)
 
     if(!sdl->renderer) {
         SDL_Log("<ERROR> SDL Renderer could not be initialized: %s\n", SDL_GetError());
+        return false;
+    }
+
+    sdl->texture = SDL_CreateTexture (
+        sdl->renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        160,
+        144
+    );
+
+    if(!sdl->texture) {
+        SDL_Log("<ERROR> SDL Texture could not be initialized: %s\n", SDL_GetError()); 
         return false;
     }
 
@@ -213,6 +230,9 @@ int main(int argc, char** argv) {
     }
 
     clear_screen(sdl);
+
+    uint32_t* pixels = (uint32_t*)malloc(sizeof(uint32_t) * SCREEN_HEIGHT * SCREEN_WIDTH);
+
     // main emulator loop
     while(gb.state != STOPPED) {
         handle_input(&gb);
@@ -230,8 +250,14 @@ int main(int argc, char** argv) {
                 goto end_success;
             }
             #endif
+            gb.mmu.PPU_update(pixels, inst_cycles);
             frame_cycles += inst_cycles;
         }
+
+        SDL_UpdateTexture(sdl.texture, NULL, pixels, 160*sizeof(uint32_t));
+        SDL_RenderClear(sdl.renderer);
+        SDL_RenderTexture(sdl.renderer, sdl.texture, NULL, NULL);
+        SDL_RenderPresent(sdl.renderer);
 
         uint64_t end_frame_time = SDL_GetPerformanceCounter();
 
@@ -240,6 +266,7 @@ int main(int argc, char** argv) {
 
         if (elapsed_time < TARGET_FRAME_MS) {
             SDL_Delay((uint32_t)(waited_time));
+            printf("Delayed: %d\n", (uint32_t)waited_time);
         }
     }
     goto end_success;

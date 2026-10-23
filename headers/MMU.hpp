@@ -21,7 +21,21 @@
 #define OBP1_REGISTER   0x49
 
 
+typedef enum {
+    WHITE           = 0xFFB7DA3C,
+    LIGHTEST_GREEN  = 0xFF9BBC0F, 
+    LIGHT_GREEN     = 0xFF8BAC0F,
+    DARK_GREEN      = 0xFF306230,
+    DARKEST_GREEN   = 0xFF0F380F
+} PPU_colour_t;
 
+
+typedef enum {
+    HBLANK = 0,
+    VBLANK = 1,
+    OAM    = 2,
+    DRAW   = 3
+} PPU_mode_t;
 
 
 
@@ -235,6 +249,9 @@ public:
             uint8_t mask = ~0x03;
             io[0x41] = (io[0x41] & read_only_mask) | (value & mask);
         }
+        else if (address == 0xFF44) {
+            // LY - Read Only
+        }
         else if (address <= 0xFF80) {
             io[address - 0xFF00] = value;
         }
@@ -267,8 +284,12 @@ public:
     /*-------------------------------*/
     // * PPU Implementation
 
-    PPU_colour_t PPU_colour = WHITE;
+    PPU_colour_t PPU_colour{WHITE};
+    PPU_mode_t PPU_mode{HBLANK};
+    int PPU_T_cycle_counter{0};
+    uint16_t PPU_scanline_dot_counter;
     // PPU main function, puts pixels to be rendered into the pointer, returns cycles
-    int 
-    int PPU_render(uint32_t* pixels);
+    void PPU_update(uint32_t* pixels, int cycles_passed);
+    // set all Pixels to "whiter than white" (clear the screen)
+    void PPU_lcd_blank(uint32_t* pixels);
 };

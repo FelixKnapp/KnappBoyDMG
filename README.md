@@ -7,4 +7,6 @@
 - [x] Interrupts
 - [x] Timers
 - [ ] PPU
+    - [x] OAM
+    - [ ] DRAW
 - [ ] Opcodes

@@ -5,13 +5,6 @@
 
 #define otherwise else if 
 
-typedef enum {
-    WHITE           = 0xFFB7DA3C,
-    LIGHTEST_GREEN  = 0xFF9BBC0F, 
-    LIGHT_GREEN     = 0xFF8BAC0F,
-    DARK_GREEN      = 0xFF306230,
-    DARKEST_GREEN   = 0xFF0F380F
-} PPU_colour_t;
 
 typedef enum {
     RUNNING = 0,
