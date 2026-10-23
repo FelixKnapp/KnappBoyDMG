@@ -20,7 +20,7 @@ void Gameboy::set_flag(uint8_t flag, bool condition) {
 }
 
 bool Gameboy::get_flag(uint8_t flag) {
-    return (reg.F & flag) != 0;
+    return ((reg.F & flag) != 0);
 }
 
 void Gameboy::set_all_flags(bool zero, bool subtract, bool half_carry, bool carry) {

@@ -64,7 +64,7 @@ bool init_sdl(sdl_t* sdl, config_t config)
 
 
 bool init_gameboy(class Gameboy* gb, char* rom_name) {
-    const uint32_t entry_point = 0x0100;
+    const uint32_t entry_point = 0x0000;
     FILE* rom_current = fopen(rom_name, "rb");
     if(rom_current == NULL) {
         SDL_Log("Could not open rom file\n");
@@ -223,13 +223,13 @@ int main(int argc, char** argv) {
         for(size_t frame_cycles = 0; frame_cycles < 70224; ) {
             uint8_t inst_cycles = 0;
             inst_cycles += gb.handle_interrupt(); 
+            gb.update_timers(inst_cycles);
             inst_cycles += gb.emulate_inst();
             #ifdef DEBUG
             if(!gb.emulate_inst_debug()) {
                 goto end_success;
             }
             #endif
-            gb.update_timers(inst_cycles);
             frame_cycles += inst_cycles;
         }
 
@@ -245,9 +245,9 @@ int main(int argc, char** argv) {
     goto end_success;
 
     end_success:
-    fclose(gb.debug_output);
     end_cleanup(sdl);
     #ifdef DEBUG
+    fclose(gb.debug_output);
     SDL_Log("Closed Debug File\n");
     #endif
 

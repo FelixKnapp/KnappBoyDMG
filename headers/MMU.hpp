@@ -8,6 +8,28 @@
 #include <string>
 #include <SDL3/SDL.h>
 
+
+
+#define LY_REGISTER     0x44
+#define STAT_REGISTER   0x41
+#define LYC_REGISTER    0x45
+#define LCDC_REGISTER   0x40
+#define SCY_REGISTER    0x42
+#define SCX_REGISTER    0x43
+#define BGP_REGISTER    0x47
+#define OBP0_REGISTER   0x48
+#define OBP1_REGISTER   0x49
+
+
+
+
+
+
+
+
+
+
+
 class Cartridge {
 public:
     virtual ~Cartridge() = default;
@@ -36,6 +58,22 @@ public:
 };
 
 class MBC1 : public Cartridge {
+std::vector<uint8_t> rom;
+std::vector<uint8_t> ram;
+
+public: 
+
+    uint8_t read(uint16_t address) override {
+        if(address < 0x4000) {
+            return rom.at(address);
+        }
+    }
+    
+    void write(uint16_t address, uint8_t value) override {
+        if(address < 0x4000) {
+            return;
+        }
+    }
 
 };
 
@@ -55,6 +93,25 @@ class MBC6 : public Cartridge {
 
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// MMU / PPU implementation
 class MMU {
     uint8_t vram[0x2000]{};   // 8 KB Video RAM
     uint8_t wram[0x2000]{};   // 8 KB Work RAM
@@ -127,9 +184,6 @@ public:
         else if (address == 0xFF0F) {
             return io[0x0F] | 0xE0; // IME (interrupt flag)
         }
-        else if (address == 0xFF41) {
-            return io[0x41] | 0x80;
-        }
         else if (address < 0xFF80) {
             return io[address - 0xFF00];
         } 
@@ -147,7 +201,6 @@ public:
         if ((address >= 0xFF00) && (address < 0xFF80)) {
             io[address - 0xFF00] = value;
         }
-        
     }
 
     void write(uint16_t address, uint8_t value) {
@@ -176,6 +229,12 @@ public:
         else if (address == 0xFF0F) {
             io[0x0F] = value;
         }
+        else if (address == 0xFF41) {
+            // STAT register for PPU 2 least significant bit are read only
+            uint8_t read_only_mask = 0x03;
+            uint8_t mask = ~0x03;
+            io[0x41] = (io[0x41] & read_only_mask) | (value & mask);
+        }
         else if (address <= 0xFF80) {
             io[address - 0xFF00] = value;
         }
@@ -195,7 +254,7 @@ public:
 
         if (is_pressed) {
             matrix &= ~(1 << key_bit);
-            
+            printf("Pressed Key");
             if (!was_pressed) {
                 uint8_t interrupt_reg_value = read(interrupt_reg_address);
                 write(interrupt_reg_address, interrupt_reg_value | (1 << 4));
@@ -204,4 +263,12 @@ public:
             matrix |= (1 << key_bit);
         }
     }
+
+    /*-------------------------------*/
+    // * PPU Implementation
+
+    PPU_colour_t PPU_colour = WHITE;
+    // PPU main function, puts pixels to be rendered into the pointer, returns cycles
+    int 
+    int PPU_render(uint32_t* pixels);
 };

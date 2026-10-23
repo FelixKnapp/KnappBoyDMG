@@ -23,7 +23,7 @@ std::unique_ptr<Cartridge> create_cartridge(std::vector<uint8_t> rom) {
             return std::make_unique<ROM_ONLY>(std::move(rom));
 
         default:
-            SDL_Log("Unimplemented MBC-Type: 0x%02X.\nStopping Emulator\n");
+            SDL_Log("Unimplemented MBC-Type: 0x%02X.\nStopping Emulator\n", mbc_type);
             return nullptr;
     }
 }
