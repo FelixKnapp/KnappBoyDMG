@@ -19,6 +19,8 @@
 #define BGP_REGISTER    0x47
 #define OBP0_REGISTER   0x48
 #define OBP1_REGISTER   0x49
+#define WX_REGISTER     0x4A
+#define WY_REGISTER     0x4B
 
 
 typedef enum {

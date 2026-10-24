@@ -29,12 +29,14 @@ help_func(){
     echo "-b build"
     echo "-g build debug"
     echo "-d output unimplemented opcodes from debug file"
+    echo "-u <arg> output unprefixed opcode"
+    echo "-p <arg> output prefixed opcode"
 
     exit 0
 }
 
 
-while getopts 'dbghf:' FLAG; do
+while getopts 'dbghf: p: u: ' FLAG; do
     case "$FLAG" in
         f)
             run_func
@@ -52,6 +54,14 @@ while getopts 'dbghf:' FLAG; do
             ;;
         h)
             help_func
+            ;;
+        u)
+            jq -r --arg o "$OPTARG" '.unprefixed.[$o]' ${EMU_PATH}/docs/opcodes.json
+            exit 0
+            ;;
+        p)
+            jq -r --arg o "$OPTARG" '.cbprefixed.[$o]' ${EMU_PATH}/docs/opcodes.json
+            exit 0
             ;;
         *)
             echo "Usage: gb <FLAGS> <ARGS>"

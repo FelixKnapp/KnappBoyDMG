@@ -8,5 +8,7 @@
 - [x] Timers
 - [ ] PPU
     - [x] OAM
-    - [ ] DRAW
+    - [x] DRAW
+    - [ ] HBLANK
+    - [ ] palettes
 - [ ] Opcodes
