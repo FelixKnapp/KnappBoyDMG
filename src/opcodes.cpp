@@ -5,14 +5,6 @@ uint16_t Gameboy::emulate_inst() {
     address = reg.PC;
     reg.PC++;
 
-    if (prefixed) {
-        prefixed = false;
-        switch(opcode) {
-            default:
-                return 0;
-        }
-    }
-
     switch(opcode) {
         
         //* ____MISC____
@@ -24,6 +16,11 @@ uint16_t Gameboy::emulate_inst() {
             // DI           Cycles: 4       Length: 1
             reg.IME = false;
             return 4;
+        case 0xCB:
+            // PREFIX       Cycles: 4 + 4   Length: 1 + 1
+            prefixed_opcode = mmu.read(reg.PC++);
+            emulate_inst_prefix(prefixed_opcode);
+            return 8;
 
 
         //* ____XOR____

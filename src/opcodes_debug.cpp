@@ -13,6 +13,13 @@ bool Gameboy::emulate_inst_debug() {
         case 0xF3:
             fprintf(debug_output, "DI");
             break;
+        case 0xCB:
+            fprintf(debug_output, "PREFIXED: ");
+            if(!emulate_inst_prefix_debug(prefixed_opcode)) {
+                fprintf(debug_output, "\n");
+                return false;
+            }
+            break;
 
         // XOR
         case 0xAF:
@@ -76,5 +83,14 @@ bool Gameboy::emulate_inst_debug() {
             return false;
     }
     fprintf(debug_output, "\n");
+    return true;
+}
+
+bool Gameboy::emulate_inst_prefix_debug(uint8_t opcode) {
+    switch(opcode) {
+        default: 
+            fprintf(debug_output, "Unknown or Unimplemented Opcode");
+            return false;
+    }
     return true;
 }

@@ -24,9 +24,8 @@ class Gameboy {
     size_t debug_lines{0};
 
     uint8_t opcode;
+    uint8_t prefixed_opcode;
     uint32_t address;
-
-    bool prefixed{false};
 
     size_t cylces_intern_tima{0};
     size_t cylces_intern_div{0};
@@ -52,7 +51,9 @@ public:
     // functions
 
     uint16_t emulate_inst();
+    void emulate_inst_prefix(uint8_t opcode);
     bool emulate_inst_debug();
+    bool emulate_inst_prefix_debug(uint8_t opcode);
 
     void update_timers(int cycles_passed);
 
