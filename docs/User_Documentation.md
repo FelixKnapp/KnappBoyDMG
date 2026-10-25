@@ -1,6 +1,6 @@
 # Gameboy
 ## Specifications
-- Language: C++ for Emulator and Bash for Command Line Programm
+- Language: C++ for Emulator Core ([EC](../src/emulator_core/)) and Bash for Command Line Programm ([CLP](../main.sh)), C++ for opcode reading unit ([ORU](../src/Opcode_reader/))
 - 
 
 ## Sources
