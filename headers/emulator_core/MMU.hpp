@@ -90,6 +90,7 @@ public:
         if(address < 0x4000) {
             return rom.at(address);
         }
+        return 0;
     }
     
     void write(uint16_t address, uint8_t value) override {

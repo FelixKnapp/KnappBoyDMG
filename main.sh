@@ -16,7 +16,7 @@ build_func(){
 }
 
 build_debug_func(){
-    make debug
+    make -j8 debug
     exit 0
 }
 
@@ -58,7 +58,7 @@ while getopts 'dbDhf: Oo: p: c' FLAG; do
             help_func
             ;;
         O)
-            make opcode_reader
+            make opcode_reader -j8
             ;;
         o)
             $EMU_PATH/bin/opcode_reader $EMU_PATH/docs/opcodes.json unprefixed $OPTARG

@@ -1,2 +1,2 @@
 Started Emulator
-Address: 029B, Opcode: 2A, Desc: Unknown or unimplemented opcode
+Address: 02A1, Opcode: 0xCD, Desc: Unknown or unimplemented opcode

@@ -1,3 +1,6 @@
+CXX=ccache g++
+CXX_FLAGS=-O3 -march=native -fno-exceptions -fno-rtti -std=c++17
+
 CPP_CORE_SRC=$(wildcard src/emulator_core/*.cpp)
 C_CORE_SRC=$(wildcard src/emulator_core/*.c)
 
@@ -13,16 +16,16 @@ INCLUDE_PATH_OPCODE_READER=headers/opcode_reader
 
 all:
 	mkdir -p bin
-	g++ -o bin/gb -I $(INCLUDE_PATH_CORE) $(CPP_CORE_SRC) `pkg-config --cflags --libs sdl3`
+	$(CXX) -o bin/gb -I $(INCLUDE_PATH_CORE) $(CPP_CORE_SRC) $(CXX_FLAGS) `pkg-config --cflags --libs sdl3`
 
 debug:
 	mkdir -p bin
 	mkdir -p debug_dir
-	g++ -o bin/gb -I $(INCLUDE_PATH_CORE) $(CPP_CORE_SRC) -DDEBUG `pkg-config --cflags --libs sdl3`
+	$(CXX) -o bin/gb -I $(INCLUDE_PATH_CORE) $(CPP_CORE_SRC) $(CXX_FLAGS) -DDEBUG `pkg-config --cflags --libs sdl3`
 
 opcode_reader:
 	mkdir -p bin
-	g++ -o bin/opcode_reader -I $(INCLUDE_PATH_OPCODE_READER) $(CPP_OPCODE_READER_SRC)
+	$(CXX) -o bin/opcode_reader -I $(INCLUDE_PATH_OPCODE_READER) $(CPP_OPCODE_READER_SRC)
 
 clean:
 	rm -rf bin

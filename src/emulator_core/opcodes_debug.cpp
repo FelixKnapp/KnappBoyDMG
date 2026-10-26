@@ -85,6 +85,10 @@ bool Gameboy::emulate_inst_debug() {
             fprintf(debug_output, "LD HL, n16");
             #endif
             break;
+        case 0x2A:
+            #ifdef LOGGING
+            fprintf(debug_output, "LD A, [HL+]");
+            #endif
         case 0x31:
             #ifdef LOGGING    
             fprintf(debug_output, "LD SP, n16");
@@ -110,6 +114,11 @@ bool Gameboy::emulate_inst_debug() {
             fprintf(debug_output, "LDH A, [a8]");
             #endif
             break;
+        case 0xE2: 
+            #ifdef LOGGING    
+            fprintf(debug_output, "LDH [C], A");
+            #endif
+            break;
         case 0xEA:
             #ifdef LOGGING    
             fprintf(debug_output, "LD [a16], A ");
@@ -129,7 +138,7 @@ bool Gameboy::emulate_inst_debug() {
             break;
 
         default:  
-            fprintf(debug_output, "Address: %04X, Opcode: %02X, Desc: ", reg.PC, opcode);
+            fprintf(debug_output, "Address: %04X, Opcode: 0x%02X, Desc: ", reg.PC, opcode);
             fprintf(debug_output, "Unknown or unimplemented opcode\n");
             printf("Unknown Opcode\n");
             return false;

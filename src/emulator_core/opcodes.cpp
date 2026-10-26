@@ -97,6 +97,10 @@ uint16_t Gameboy::emulate_inst() {
             // LD [HL-], A  Cycles: 8       Length: 1
             mmu.write(reg.HL--, reg.A);
             return 8;
+        case 0x2A: 
+            //  LD A, [HL+]  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            reg.A = mmu.read(reg.HL++);
+            return 8;
         case 0x36: {
             // LD [HL] , n8 |  Lenght: 2    Cycles: 12    Flags: - - - - 
             uint8_t n8 = fetch_byte();
@@ -115,6 +119,10 @@ uint16_t Gameboy::emulate_inst() {
             uint8_t a8 = fetch_byte();
             reg.A = mmu.read(0xFF00 + a8);
             return 12;
+        }
+        case 0xE2: {
+            // LDH [C], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            mmu.write(0xFF00 + reg.C, reg.A);
         }
         case 0xEA: {
             // LD [a16], A  Cycles: 16      Length: 3
