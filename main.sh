@@ -28,16 +28,17 @@ help_func(){
     echo "-f <arg> start with rom"
     echo "-b build"
     echo "-D build debug"
+    echo "-c clean"
     echo "-d output unimplemented opcodes from debug file"
     echo "-O build opcode reader"
-    echo "-o <arg> use opcode reader unprefixed"
-    echo "-p <arg> use opcode reader prefixed"
+    echo "-o <arg> use opcode reader unprefixed, for help use -o help"
+    echo "-p <arg> use opcode reader prefixed, for help use -p help"
 
     exit 0
 }
 
 
-while getopts 'dbghf: Oo: p: ' FLAG; do
+while getopts 'dbDhf: Oo: p: c' FLAG; do
     case "$FLAG" in
         f)
             run_func

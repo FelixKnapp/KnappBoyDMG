@@ -6,6 +6,7 @@ const std::string RESET_COLOUR = "\033[0m";
 const std::string CYAN = "\033[1;36m";
 const std::string GREEN = "\033[1;32m";
 const std::string BLUE = "\033[1;34m";
+const std::string MAGENTA = "\033[1;35m";
 
 int main(int argc, char** argv) {
 
@@ -15,6 +16,11 @@ int main(int argc, char** argv) {
     std::string file_path   = argv[1];
     std::string prefix      = argv[2];
     std::string opcode      = argv[3];
+
+    if(prefix == "help") {
+        std::cout << "Flag order: Z N H C" <<  std::endl;
+        return 0;
+    }
 
     std::ifstream json_file(file_path.c_str());
 
@@ -40,16 +46,42 @@ int main(int argc, char** argv) {
         std::string name = operand["name"];
         if(first_run) {
             if (!immediate) {
-                std::cout << "[" << name << "]";
+                std::cout << "[" << name;
+                if(operand.contains("decrement")){
+                    std::cout << "-";
+                }
+                if(operand.contains("increment")) {
+                    std::cout << "+";
+                }
+                std::cout  << "]";
             } else {
                 std::cout << name;
+                if(operand.contains("decrement")){
+                    std::cout << "-";
+                }
+                if(operand.contains("increment")) {
+                    std::cout << "+";
+                }
             }
             first_run = false;
         } else {
             if (!immediate) {
-                std::cout << " , [" << name << "]";
+                std::cout << ", [" << name;
+                if(operand.contains("decrement")){
+                    std::cout << "-";
+                }
+                if(operand.contains("increment")) {
+                    std::cout << "+";
+                }
+                std::cout << "]";
             } else {
-                std::cout << " , " << name;
+                std::cout << ", " << name;
+                if(operand.contains("decrement")){
+                    std::cout << "-";
+                }
+                if(operand.contains("increment")) {
+                    std::cout << "+";
+                }
             }
         }
 
@@ -64,6 +96,16 @@ int main(int argc, char** argv) {
         std::cout << "  | " << BLUE <<  " Cycles: " << cycles_array[0];
     } else {
         std::cout << "  | " << BLUE <<  " Cycles: " << cycles_array[0] << "/" << cycles_array[1];
+    }
+
+    std::string flag_names[] = {
+        "Z", "N", "H", "C"
+    };
+
+    std::cout << RESET_COLOUR << "  |  " << MAGENTA << "Flags: ";
+    for(uint8_t i = 0; i < 4; i++) {
+        std::string flag = json_data[prefix][opcode]["flags"][flag_names[i]];
+        std::cout << flag << " ";
     }
 
     std::cout << std::endl;
