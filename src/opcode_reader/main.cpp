@@ -17,6 +17,11 @@ int main(int argc, char** argv) {
     std::string prefix      = argv[2];
     std::string opcode      = argv[3];
 
+    int found = opcode.find("0x");
+    if(found == std::string::npos) {
+        opcode.insert(0, "0x");
+    }
+
     if(prefix == "help") {
         std::cout << "Flag order: Z N H C" <<  std::endl;
         return 0;
@@ -89,7 +94,7 @@ int main(int argc, char** argv) {
     std::cout << RESET_COLOUR;
 
 
-    std::cout << "  | " << CYAN << "Lenght: " << bytes << RESET_COLOUR;
+    std::cout << "  |  " << CYAN << "Lenght: " << bytes << RESET_COLOUR;
 
     // check if one or two cycle
     if (cycles_array.size() == 1) {

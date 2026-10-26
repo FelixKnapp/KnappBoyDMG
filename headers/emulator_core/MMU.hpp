@@ -39,7 +39,14 @@ typedef enum {
     DRAW   = 3
 } PPU_mode_t;
 
-
+// store sprite data from OAM in struct
+typedef struct {
+    uint8_t y;
+    uint8_t x;
+    uint8_t flags;
+    uint8_t tile_index;
+    uint8_t oam_index;
+} OAM_Sprite_t;
 
 
 
@@ -294,4 +301,9 @@ public:
     void PPU_update(uint32_t* pixels, int cycles_passed);
     // set all Pixels to "whiter than white" (clear the screen)
     void PPU_lcd_blank(uint32_t* pixels);
+    // PPU scanline rendering
+    void PPU_render_scanline(uint32_t* pixels, uint8_t& ly, uint8_t& lyc,  uint8_t& lcdc, 
+                            uint8_t& stat, uint8_t& scy,  uint8_t& scx, uint8_t& bgp,  
+                            uint8_t& obp0, uint8_t& obp1, uint8_t wx, uint8_t& wy);
+
 };

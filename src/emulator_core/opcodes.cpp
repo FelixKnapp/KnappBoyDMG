@@ -88,13 +88,20 @@ uint16_t Gameboy::emulate_inst() {
             // LD HL, n16   Cycles: 12      Length: 3
             reg.HL = fetch_word();
             return 12;
+        case 0x31:
+            // Mnemonic: LD SP, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 
+            reg.SP = fetch_word();
+            return 12;
+
         case 0x32:
             // LD [HL-], A  Cycles: 8       Length: 1
             mmu.write(reg.HL--, reg.A);
             return 8;
         case 0x36: {
-            // LD [HL] , n8   Lenght: 2    Cycles: 12    Flags: - - - - 
-            uint8_t n8 = mmu.read(reg.HL);
+            // LD [HL] , n8 |  Lenght: 2    Cycles: 12    Flags: - - - - 
+            uint8_t n8 = fetch_byte();
+            mmu.write(reg.HL, n8);
+            return 12;
         }
         
         case 0xE0: {

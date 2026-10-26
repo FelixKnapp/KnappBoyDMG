@@ -4,6 +4,7 @@
 #include <MMU.hpp>
 
 #define otherwise else if 
+#define NO_LOGGING
 
 
 typedef enum {
@@ -21,7 +22,9 @@ namespace Flag {
 
 
 class Gameboy {
+    #ifdef LOGGING
     size_t debug_lines{0};
+    #endif
 
     uint8_t opcode;
     uint8_t prefixed_opcode;
@@ -39,7 +42,7 @@ public:
         }
         SDL_Log("Opened Debug File");
         fprintf(debug_output, "Started Emulator\n");
-        return true;;
+        return true;
     }
     FILE* debug_output;
     registers_t reg;

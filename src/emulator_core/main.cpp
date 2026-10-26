@@ -69,6 +69,7 @@ bool init_sdl(sdl_t* sdl, config_t config)
         160,
         144
     );
+    SDL_SetTextureScaleMode(sdl->texture, SDL_SCALEMODE_NEAREST);
 
     if(!sdl->texture) {
         SDL_Log("<ERROR> SDL Texture could not be initialized: %s\n", SDL_GetError()); 
@@ -254,7 +255,8 @@ int main(int argc, char** argv) {
             frame_cycles += inst_cycles;
         }
 
-        SDL_UpdateTexture(sdl.texture, NULL, pixels, 160*sizeof(uint32_t));
+
+        SDL_UpdateTexture(sdl.texture, NULL, pixels, 160 * sizeof(uint32_t));
         SDL_RenderClear(sdl.renderer);
         SDL_RenderTexture(sdl.renderer, sdl.texture, NULL, NULL);
         SDL_RenderPresent(sdl.renderer);
@@ -266,8 +268,8 @@ int main(int argc, char** argv) {
 
         if (elapsed_time < TARGET_FRAME_MS) {
             SDL_Delay((uint32_t)(waited_time));
-            printf("Delayed: %d\n", (uint32_t)waited_time);
         }
+        std::cout << elapsed_time << "ms" <<std::endl;
     }
     goto end_success;
 
