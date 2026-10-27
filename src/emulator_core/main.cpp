@@ -235,18 +235,21 @@ int main(int argc, char** argv) {
         
         uint64_t start_frame_time = SDL_GetPerformanceCounter();
 
-        for(size_t frame_cycles = 0; frame_cycles < 70224; ) {
-            uint8_t inst_cycles = 0;
-            inst_cycles += gb.handle_interrupt(); 
-            gb.update_timers(inst_cycles);
-            inst_cycles += gb.emulate_inst();
-            #ifdef DEBUG
-            if(!gb.emulate_inst_debug()) {
-                goto end_success;
+        for(uint8_t scanline = 0; scanline < 154; scanline++) {
+            uint16_t scanline_cycles = 0;
+            for(; scanline_cycles < 456;) {
+                uint8_t inst_cycles = 0;
+                inst_cycles += gb.handle_interrupt(); 
+                gb.update_timers(inst_cycles);
+                inst_cycles += gb.emulate_inst();
+                #ifdef DEBUG
+                if(!gb.emulate_inst_debug()) {
+                    goto end_success;
+                }
+                #endif
+                scanline_cycles += inst_cycles;
             }
-            #endif
-            gb.mmu.PPU_update(pixels, inst_cycles);
-            frame_cycles += inst_cycles;
+            gb.mmu.PPU_update(pixels, scanline_cycles);
         }
 
 
@@ -262,8 +265,8 @@ int main(int argc, char** argv) {
 
         if (elapsed_time < TARGET_FRAME_MS) {
             SDL_Delay((uint32_t)(waited_time));
+            std::cout << "Delayed: " << waited_time << "ms" <<std::endl;
         }
-        std::cout << elapsed_time << "ms" <<std::endl;
     }
     goto end_success;
 
