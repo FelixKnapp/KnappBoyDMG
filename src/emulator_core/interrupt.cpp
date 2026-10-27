@@ -13,8 +13,8 @@ int Gameboy::handle_interrupt() {
     int return_value = 0;
     if(!reg.IME) return 0;
     reg.IME = false;
-    fprintf(debug_output, "-------\n");
-    fprintf(debug_output, "Handling Interrupt: ");
+    printf("-------\n");
+    printf("Handling Interrupt: ");
     Innterrupt_t interrupt;
     uint8_t interrupts_count = 0;
 
@@ -28,28 +28,28 @@ int Gameboy::handle_interrupt() {
     bool joypad = ((reg_IF >> 4)  & 0x1) && ((reg_IE >> 4) & 0x1);
 
     if(vblank) {
-        fprintf(debug_output, "VBLANK\n");
+        printf( "VBLANK\n");
         interrupt = VBLANK_INTERRUPT;
         reg_IF &= ~0b1;
     } else if(lcd) {
-        fprintf(debug_output, "LCD\n");
+        printf( "LCD\n");
         interrupt = LCD;
         reg_IF &= ~0b10;
     } else if(timer) {
-        fprintf(debug_output, "TIMER\n");
+        printf( "TIMER\n");
         interrupt = TIMER;
         reg_IF &= ~0b100;
     } else if(serial) {
-        fprintf(debug_output, "SERIAL\n");
+        printf( "SERIAL\n");
         interrupt = SERIAL;
         reg_IF &= ~0b1000;
     } else if(joypad) {
-        fprintf(debug_output, "JOYPAD\n");
+        printf( "JOYPAD\n");
         interrupt = JOYPAD;
         reg_IF &= ~0b10000;
     } else {
-        fprintf(debug_output, "NONE\n");
-        fprintf(debug_output, "-------\n");
+        printf( "NONE\n");
+        printf( "-------\n");
         return return_value;
     }
 
@@ -62,7 +62,7 @@ int Gameboy::handle_interrupt() {
     return_value += 4;
     mmu.write_io(0xFF0F, reg_IF);
 
-    fprintf(debug_output, "-------\n");
+    printf( "-------\n");
 
     return return_value;
 }

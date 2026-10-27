@@ -84,6 +84,10 @@ uint16_t Gameboy::emulate_inst() {
             reg.C = fetch_byte();
             return 8;
 
+        case 0x01:
+            // LD BC, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 
+            reg.BC = fetch_word();
+            return 12;
         case 0x21: 
             // LD HL, n16   Cycles: 12      Length: 3
             reg.HL = fetch_word();
@@ -147,6 +151,16 @@ uint16_t Gameboy::emulate_inst() {
             uint16_t a16 = fetch_word();
             reg.PC = a16;
             return 16;
+        }
+
+
+        //* ___CALL___
+        case 0xCD: {
+            // Mnemonic: CALL a16  |  Lenght: 3  |  Cycles: 24  |  Flags: - - - - 
+            uint16_t a16 = fetch_word();
+            push_word(reg.PC);
+            reg.PC = a16;
+            return 24;
         }
 
         default:

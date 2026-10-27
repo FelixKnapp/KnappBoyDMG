@@ -43,3 +43,13 @@ void Gameboy::push_word(uint16_t value) {
     push_byte(lsb);
     return;
 }
+
+uint8_t Gameboy::pop_byte() {
+    return mmu.read(reg.SP++);
+}
+
+uint16_t Gameboy::pop_word() {
+    uint8_t msb = pop_byte();
+    uint16_t lsb = static_cast<uint16_t>(pop_byte());
+    return ((msb << 8) | lsb);
+}

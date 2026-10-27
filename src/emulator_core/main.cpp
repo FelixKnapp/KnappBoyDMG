@@ -224,12 +224,6 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    if(!gb.open_debug_file(debug_path)) {
-        SDL_Log("Couldnt open debug file, aborting\n");
-        end_cleanup(sdl);
-        exit(EXIT_FAILURE);
-    }
-
     clear_screen(sdl);
 
     uint32_t* pixels = (uint32_t*)malloc(sizeof(uint32_t) * SCREEN_HEIGHT * SCREEN_WIDTH);
@@ -275,10 +269,6 @@ int main(int argc, char** argv) {
 
     end_success:
     end_cleanup(sdl);
-    #ifdef DEBUG
-    fclose(gb.debug_output);
-    SDL_Log("Closed Debug File\n");
-    #endif
 
     return 0;
 }

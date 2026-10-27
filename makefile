@@ -20,7 +20,6 @@ all:
 
 debug:
 	mkdir -p bin
-	mkdir -p debug_dir
 	$(CXX) -o bin/gb -I $(INCLUDE_PATH_CORE) $(CPP_CORE_SRC) $(CXX_FLAGS) -DDEBUG `pkg-config --cflags --libs sdl3`
 
 opcode_reader:
@@ -29,5 +28,4 @@ opcode_reader:
 
 clean:
 	rm -rf bin
-	rm -rf debug_dir
 	@echo "cleaned" 

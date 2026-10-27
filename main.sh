@@ -29,7 +29,6 @@ help_func(){
     echo "-b build"
     echo "-D build debug"
     echo "-c clean"
-    echo "-d output unimplemented opcodes from debug file"
     echo "-O build opcode reader"
     echo "-o <arg> use opcode reader unprefixed, for help use -o help"
     echo "-p <arg> use opcode reader prefixed, for help use -p help"
@@ -38,15 +37,10 @@ help_func(){
 }
 
 
-while getopts 'dbDhf: Oo: p: c' FLAG; do
+while getopts 'bDhf: Oo: p: c' FLAG; do
     case "$FLAG" in
         f)
             run_func
-            ;;
-        d)
-            echo "Unimplemented Opcodes: "
-            cat $DEBUG_FILE | grep "Unknown"
-            exit 0
             ;;
         b)
             build_func
@@ -67,6 +61,9 @@ while getopts 'dbDhf: Oo: p: c' FLAG; do
         p)
             $EMU_PATH/bin/opcode_reader $EMU_PATH/docs/opcodes.json cbprefixed $OPTARG
             exit 0
+            ;;
+        c)
+            make clean
             ;;
         *)
             echo "Usage: gb <FLAGS> <ARGS>"

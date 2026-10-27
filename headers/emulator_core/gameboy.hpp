@@ -35,16 +35,6 @@ class Gameboy {
     bool enable_tima{false};
 
 public:
-    bool open_debug_file(std::string debug_output_path) {
-        debug_output = fopen(debug_output_path.c_str(), "wb");
-        if(!debug_output) {
-            return false;
-        }
-        SDL_Log("Opened Debug File");
-        fprintf(debug_output, "Started Emulator\n");
-        return true;
-    }
-    FILE* debug_output;
     registers_t reg;
     class MMU mmu;
     state_t state{RUNNING};
@@ -52,7 +42,6 @@ public:
 
 
     // functions
-
     uint16_t emulate_inst();
     void emulate_inst_prefix(uint8_t opcode);
     bool emulate_inst_debug();
@@ -73,6 +62,10 @@ public:
     void push_byte(uint8_t value);
     // Push 16 bit integer value to stack, decrement SP by 2 in the process
     void push_word(uint16_t value);
+    // Pop 8 bit integer value from stack, increment SP by 1 in the process
+    uint8_t  pop_byte();
+    // Pop 16 bit integer value from stack, increment SP by 2 in the process
+    uint16_t pop_word();
     // set flag
     void set_flag(uint8_t flag, bool condition);
     // get flag
@@ -81,4 +74,5 @@ public:
     void set_all_flags(bool zero, bool subtract, bool half_carry, bool carry);
     // fetch clock select mode and set enable_tima
     uint8_t get_clock_select();
+
 };

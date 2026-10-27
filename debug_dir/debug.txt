@@ -1,2 +1,0 @@
-Started Emulator
-Address: 02A1, Opcode: 0xCD, Desc: Unknown or unimplemented opcode
