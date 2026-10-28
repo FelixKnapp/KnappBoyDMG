@@ -10,70 +10,65 @@ bool Gameboy::emulate_inst_debug() {
             if(!emulate_inst_prefix_debug(prefixed_opcode)) {
                 return false;
             }
-            break;
+        break;
 
         // MISC
         case 0x00:
-            break;
         case 0xF3:
-            break;
+
+        // OR
+        case 0xB1:
 
         // XOR
+        case 0xAE:
         case 0xAF:
-            break;
 
         // DEC
         case 0x05:
-            break;
         case 0x0D:
-            break;
         case 0x0B:
-            break;
 
         // CP
         case 0xFE:
-            break;
+
+        // INC
+        case 0x03:
 
         // LD
-        case 0x3E:
-            break;
-        case 0x06:
-            break;
-        case 0x0E:
-            break;
         case 0x01: 
-            break;
+        case 0x06:
+        case 0x0E:
+        case 0x12:
         case 0x21: 
-            break;
+        case 0x26: 
         case 0x2A:
-            break;
         case 0x31:
-            break;
         case 0x32: 
-            break;
-        case 0x36: 
-            break;
+        case 0x36:
+        case 0x3E:
+        case 0x78: 
         case 0xE0: 
-            break;
         case 0xF0: 
-            break;
         case 0xE2: 
-            break;
         case 0xEA:
-            break;
 
         // JP
         case 0x20:
-            break;
         case 0xC3:
-            break;
 
+        break;
         // CALL
         case 0xCD:
+            //printf("Address: 0x%04X, Opcode: 0x%02X, Desc: CALL\n", mmu.read(reg.SP + 1), opcode);
             break;
 
+        // RET
+        case 0xC9:
+            //printf("Address: 0x%04X, Opcode: 0x%02X, Desc: RET\n", address, opcode);
+        break;
+
         default:  
-            printf("Address: %04X, Opcode: 0x%02X, Desc: ", reg.PC, opcode);
+            printf("Address: 0x%04X, Opcode: 0x%02X, Desc: ", address, opcode);
             printf("Unknown or unimplemented opcode\n");
             return false;
     }
@@ -83,7 +78,7 @@ bool Gameboy::emulate_inst_debug() {
 bool Gameboy::emulate_inst_prefix_debug(uint8_t opcode) {
     switch(opcode) {
         default:   
-            printf("Address: %04X, Opcode: 0x%02X, Desc: ", reg.PC, opcode);
+            printf("PREFIXED: Address: 0x%04X, Opcode: 0x%02X, Desc: ", address, opcode);
             printf("Unknown or Unimplemented Opcode\n");
             return false;
     }

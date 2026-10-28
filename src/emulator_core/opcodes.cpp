@@ -19,16 +19,31 @@ uint16_t Gameboy::emulate_inst() {
         case 0xCB:
             // PREFIX       Cycles: 4 + 4   Length: 1 + 1
             prefixed_opcode = mmu.read(reg.PC++);
+            printf("PREFIXED: ");
             emulate_inst_prefix(prefixed_opcode);
             return 8;
 
 
+        //* ____OR_____
+        case 0xB1: 
+            // OR A, C  |  Lenght: 1  |  Cycles: 4  |  Flags: Z 0 0 0 
+            reg.A |= reg.C;
+            set_all_flags(reg.A == 0, false, false, false);
+            return 4;
+
+
         //* ____XOR____
+        case 0xAE:
+            // XOR A, [HL]  |  Lenght: 1  |  Cycles: 8  |  Flags: Z 0 0 0
+            reg.A ^= mmu.read(reg.HL);
+            set_all_flags(reg.A == 0, false, false, false);
+            return 8;
         case 0xAF:
             // XOR A,A      Cycles: 4       Length: 1       Flags: 1 0 0 0
             reg.A ^= reg.A;
             set_all_flags(true, false, false, false);
             return 4;
+
 
 
         //* ___DEC____
@@ -70,6 +85,13 @@ uint16_t Gameboy::emulate_inst() {
         }
 
 
+        //* ____INC____
+        case 0x03: 
+            // INC BC  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            reg.BC++;
+            return 8;
+
+
         //* ____LD____
         case 0x3E:
             // LD A, n8     Cycles: 8       Length: 2
@@ -83,6 +105,15 @@ uint16_t Gameboy::emulate_inst() {
             // LD C, n8     Cycles: 8       Length: 2
             reg.C = fetch_byte();
             return 8;
+        case 0x26:
+            // LD H, n8  |  Lenght: 2  |  Cycles: 8  |  Flags: - - - - 
+            reg.H = fetch_byte();
+            return 8;
+
+        case 0x78:
+            // LD A, B  |  Lenght: 1  |  Cycles: 4  |  Flags: - - - - 
+            reg.A = reg.B;
+            return 4;
 
         case 0x01:
             // LD BC, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 
@@ -111,6 +142,11 @@ uint16_t Gameboy::emulate_inst() {
             mmu.write(reg.HL, n8);
             return 12;
         }
+        case 0x12: 
+            // LD [DE], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            mmu.write(reg.DE, reg.A);
+            return 8;
+        
         
         case 0xE0: {
             // LDH [a8], A  Cycles: 12      Length: 2
@@ -156,12 +192,18 @@ uint16_t Gameboy::emulate_inst() {
 
         //* ___CALL___
         case 0xCD: {
-            // Mnemonic: CALL a16  |  Lenght: 3  |  Cycles: 24  |  Flags: - - - - 
+            // CALL a16  |  Lenght: 3  |  Cycles: 24  |  Flags: - - - - 
             uint16_t a16 = fetch_word();
             push_word(reg.PC);
             reg.PC = a16;
             return 24;
         }
+
+        //* ___RET____
+        case 0xC9: 
+            // RET   |  Lenght: 1  |  Cycles: 16  |  Flags: - - - - 
+            reg.PC = pop_word();
+            return 24;
 
         default:
                 return 0;
