@@ -114,6 +114,10 @@ uint16_t Gameboy::emulate_inst() {
             // LD A, B  |  Lenght: 1  |  Cycles: 4  |  Flags: - - - - 
             reg.A = reg.B;
             return 4;
+        case 0x79:
+            // LD A, C  |  Lenght: 1  |  Cycles: 4  |  Flags: - - - - 
+            reg.A = reg.C;
+            return 4;
 
         case 0x01:
             // LD BC, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 

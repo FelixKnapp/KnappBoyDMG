@@ -7,12 +7,16 @@ C_CORE_SRC=$(wildcard src/emulator_core/*.c)
 CPP_OPCODE_READER_SRC=$(wildcard src/opcode_reader/*.cpp)
 C_OPCODE_READER_SRC=$(wildcard src/opcode_reader/*.c)
 
+CPP_OPCODE_TABLE_SRC=$(wildcard src/opcode_table/*.cpp)
+C_OPCODE_TABLE_SRC=$(wildcard src/opcode_table/*.c)
+
 ROMS=$(wildcard roms/*.COM)
 INCLUDE_PATH_CORE=headers/emulator_core
 INCLUDE_PATH_OPCODE_READER=headers/opcode_reader
+INCLUDE_PATH_OPCODE_TABLE=headers/opcode_table
 
 
-.PHONY=all debug opcode_reader clean
+.PHONY=all debug opcode_reader opcode_table clean
 
 all:
 	mkdir -p bin
@@ -25,6 +29,10 @@ debug:
 opcode_reader:
 	mkdir -p bin
 	$(CXX) -o bin/opcode_reader -I $(INCLUDE_PATH_OPCODE_READER) $(CPP_OPCODE_READER_SRC)
+
+opcode_table:
+	mkdir -p bin
+	$(CXX) -o bin/opcode_table -I $(INCLUDE_PATH_OPCODE_TABLE) $(CPP_OPCODE_TABLE_SRC)
 
 clean:
 	rm -rf bin

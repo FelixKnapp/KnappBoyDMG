@@ -47,9 +47,10 @@ bool Gameboy::emulate_inst_debug() {
         case 0x36:
         case 0x3E:
         case 0x78: 
+        case 0x79: 
         case 0xE0: 
         case 0xF0: 
-        case 0xE2: 
+        case 0xE2:
         case 0xEA:
 
         // JP

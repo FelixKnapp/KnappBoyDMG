@@ -32,12 +32,14 @@ help_func(){
     echo "-O build opcode reader"
     echo "-o <arg> use opcode reader unprefixed, for help use -o help"
     echo "-p <arg> use opcode reader prefixed, for help use -p help"
+    echo "-t print opcode table arg = prefixed/unprefixed"
+    echo "-T build opcode table"
 
     exit 0
 }
 
 
-while getopts 'bDhf: Oo: p: c' FLAG; do
+while getopts 'bDhf: Oo: p: ct: T' FLAG; do
     case "$FLAG" in
         f)
             run_func
@@ -53,17 +55,27 @@ while getopts 'bDhf: Oo: p: c' FLAG; do
             ;;
         O)
             make opcode_reader -j8
+            exit 0
             ;;
         o)
             $EMU_PATH/bin/opcode_reader $EMU_PATH/docs/opcodes.json unprefixed $OPTARG
             exit 0
             ;;
         p)
-            $EMU_PATH/bin/opcode_reader $EMU_PATH/docs/opcodes.json cbprefixed $OPTARG
+            $EMU_PATH/bin/opcode_reader $EMU_PATH/docs/opcodes.json prefixed $OPTARG
             exit 0
             ;;
         c)
             make clean
+            exit 0
+            ;;
+        t)
+            $EMU_PATH/bin/opcode_table $EMU_PATH/docs/opcodes.json $OPTARG
+            exit 0
+            ;;
+        T)
+            make -j8 opcode_table
+            exit 0
             ;;
         *)
             echo "Usage: gb <FLAGS> <ARGS>"
