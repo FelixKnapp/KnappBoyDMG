@@ -17,4 +17,4 @@
     - [ ] palettes
 - [ ] Opcodes
 - [x] Opcode Information in Terminal
-- [x] Opcode Table in Terminal (Work in Progress)
+- [x] Opcode Table in Terminal 

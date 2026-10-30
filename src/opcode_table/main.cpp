@@ -8,12 +8,15 @@
 
 // get Color for corresponding opcode
 tabulate::Color get_opcode_color_unprefixed(std::string mnemonic) {
-    tabulate::Color colour_cell;
+    tabulate::Color colour_cell = tabulate::Color::none;
   
     // Misc / Control Instructions (Red)
     if (mnemonic == "STOP"   || mnemonic == "HALT" ||
         mnemonic == "PREFIX" || mnemonic == "DI"   || mnemonic == "EI") {
         colour_cell = tabulate::Color::red;
+    }
+    else if(mnemonic == "NOP") {
+        colour_cell = tabulate::Color::none;
     }
     // Jumps / Calls (Orange)
     else if (mnemonic == "JR"  || mnemonic == "JP" || mnemonic == "CALL" ||
@@ -28,19 +31,14 @@ tabulate::Color get_opcode_color_unprefixed(std::string mnemonic) {
     else if (mnemonic == "PUSH" || mnemonic == "POP") {
         colour_cell = tabulate::Color::green;
     }
-
-    // Arithmetic / Logical Instructions (Olive/Yellow-Brown)
-    
-
     // 8-bit Shift, Rotate and Bit Instructions (Cyan)
     else if (mnemonic == "RLCA" || mnemonic == "RRCA" || 
              mnemonic == "RLA"  || mnemonic == "RRA"  ) {
         colour_cell = tabulate::Color::cyan;
     }
-
-    // Default (Grey)
+    // Arithmetic / Logical Instructions (Yellow)
     else {
-      colour_cell = tabulate::Color::none;
+        colour_cell = tabulate::Color::yellow;
     }
     
     return colour_cell;
@@ -62,6 +60,7 @@ int main(int argc, char** argv) {
     std::string json_path = argv[1];
     std::string prefix = argv[2];
 
+    // TODO: Add Legend
     if(prefix == "Legend") {
 
         return 0;

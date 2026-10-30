@@ -11,12 +11,18 @@ run_func(){
 }
 
 build_func(){
+    CURRENT_DIR=$(pwd)
+    cd $EMU_PATH
     make
+    cd $CURRENT_DIR
     exit 0
 }
 
 build_debug_func(){
+    CURRENT_DIR=$(pwd)
+    cd $EMU_PATH
     make -j8 debug
+    cd $CURRENT_DIR
     exit 0
 }
 
@@ -54,7 +60,10 @@ while getopts 'bDhf: Oo: p: ct: T' FLAG; do
             help_func
             ;;
         O)
+            CURRENT_DIR=$(pwd)
+            cd $EMU_PATH
             make opcode_reader -j8
+            cd $CURRENT_DIR
             exit 0
             ;;
         o)
@@ -66,7 +75,10 @@ while getopts 'bDhf: Oo: p: ct: T' FLAG; do
             exit 0
             ;;
         c)
+            CURRENT_DIR=$(pwd)
+            cd $EMU_PATH
             make clean
+            cd $CURRENT_DIR
             exit 0
             ;;
         t)
@@ -74,7 +86,10 @@ while getopts 'bDhf: Oo: p: ct: T' FLAG; do
             exit 0
             ;;
         T)
+            CURRENT_DIR=$(pwd)
+            cd $EMU_PATH
             make -j8 opcode_table
+            cd $CURRENT_DIR
             exit 0
             ;;
         *)
