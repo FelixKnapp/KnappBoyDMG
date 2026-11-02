@@ -146,7 +146,7 @@ uint16_t Gameboy::emulate_inst() {
             return 4;
         }
 
-        
+
         //* ____LD____
         case 0x3E:
             // LD A, n8     Cycles: 8       Length: 2
@@ -187,10 +187,14 @@ uint16_t Gameboy::emulate_inst() {
             reg.HL = fetch_word();
             return 12;
         case 0x31:
-            // Mnemonic: LD SP, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 
+            // LD SP, n16  |  Lenght: 3  |  Cycles: 12  |  Flags: - - - - 
             reg.SP = fetch_word();
             return 12;
 
+        case 0x22: 
+            //  LD [HL+], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            mmu.write(reg.HL++, reg.A);
+            return 8;
         case 0x32:
             // LD [HL-], A  Cycles: 8       Length: 1
             mmu.write(reg.HL--, reg.A);
@@ -199,12 +203,10 @@ uint16_t Gameboy::emulate_inst() {
             //  LD A, [HL+]  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
             reg.A = mmu.read(reg.HL++);
             return 8;
-        case 0x36: {
+        case 0x36: 
             // LD [HL] , n8 |  Lenght: 2    Cycles: 12    Flags: - - - - 
-            uint8_t n8 = fetch_byte();
-            mmu.write(reg.HL, n8);
+            mmu.write(reg.HL, fetch_byte());
             return 12;
-        }
         case 0x12: 
             // LD [DE], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
             mmu.write(reg.DE, reg.A);
