@@ -281,7 +281,7 @@ public:
 
         if (is_pressed) {
             matrix &= ~(1 << key_bit);
-            printf("Pressed Key");
+            printf("Pressed Key: %d", key_bit);
             if (!was_pressed) {
                 uint8_t interrupt_reg_value = read(interrupt_reg_address);
                 write(interrupt_reg_address, interrupt_reg_value | (1 << 4));

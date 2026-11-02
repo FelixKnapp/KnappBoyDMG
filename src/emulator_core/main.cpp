@@ -5,6 +5,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 #define A_BUTTON_SDL        SDLK_O
 #define B_BUTTON_SDL        SDLK_P
@@ -223,7 +224,7 @@ int main(int argc, char** argv) {
         end_cleanup(sdl);
         exit(EXIT_FAILURE);
     }
-
+    
     clear_screen(sdl);
 
     uint32_t* pixels = (uint32_t*)malloc(sizeof(uint32_t) * SCREEN_HEIGHT * SCREEN_WIDTH);

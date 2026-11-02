@@ -53,3 +53,9 @@ uint16_t Gameboy::pop_word() {
     uint16_t lsb = static_cast<uint16_t>(pop_byte());
     return ((msb << 8) | lsb);
 }
+
+uint16_t Gameboy::pop_word_debug() {
+    uint8_t msb = mmu.read(reg.SP + 1);
+    uint16_t lsb = static_cast<uint16_t>(mmu.read(reg.SP + 2));
+    return ((msb << 8) | lsb);
+}

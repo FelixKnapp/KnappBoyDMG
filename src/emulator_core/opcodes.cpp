@@ -72,6 +72,31 @@ uint16_t Gameboy::emulate_inst() {
             return 8;
 
 
+        //* ____ADC___
+        case 0x8C: {
+            // ADC A, H  |  Lenght: 1  |  Cycles: 4  |  Flags: Z 0 H C 
+            uint8_t result = reg.A + reg.H + get_flag(Flag::C);
+            bool zero = (result == 0);
+            bool half_carry = ((reg.A & 0xF) + (reg.H & 0xF)  + get_flag(Flag::C)) > 0x0F;
+            bool carry = (static_cast<uint16_t>(reg.A) + static_cast<uint8_t>(reg.H) + get_flag(Flag::C)) > 0xFF;
+
+            set_all_flags(zero, false, half_carry, carry);
+            reg.A = result;
+            return 4;
+        }
+
+
+        //* ____RL____
+        case 0x07: {
+            // RLCA   |  Lenght: 1  |  Cycles: 4  |  Flags: 0 0 0 C
+            bool carry = reg.A >> 7;
+            reg.A <<= 1;
+            reg.A = carry ? (reg.A | 1) : (reg.A & ~1);
+            set_all_flags(false, false, false, carry);
+            return 4;
+        }
+
+
         //* ____CP____
         case 0xFE: {
             // CP A, n8     Cycles: 8       Length: 2       Flags: Z 1 H C
@@ -90,8 +115,38 @@ uint16_t Gameboy::emulate_inst() {
             // INC BC  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
             reg.BC++;
             return 8;
+        case 0x04: {
+            // INC B  |  Lenght: 1  |  Cycles: 4  |  Flags: Z 0 H - 
+            bool half_carry = (reg.B == 0x0F);
+            reg.B++;
+            bool zero = (reg.B == 0x00);
+            set_flag(Flag::Z, zero);
+            set_flag(Flag::N, false);
+            set_flag(Flag::H, half_carry);
+            return 4;
+        }
+        case 0x0C: {
+            // INC C  |  Lenght: 1  |  Cycles: 4  |  Flags: Z 0 H -
+            bool half_carry = (reg.C == 0x0F);
+            reg.C++;
+            bool zero = (reg.C == 0x00);
+            set_flag(Flag::Z, zero);
+            set_flag(Flag::N, false);
+            set_flag(Flag::H, half_carry);
+            return 4;
+        }
+        case 0x14: {
+            // INC D  |  Lenght: 1  |  Cycles: 4  |  Flags: Z 0 H - 
+            bool half_carry = (reg.D == 0x0F);
+            reg.D++;
+            bool zero = (reg.D == 0x00);
+            set_flag(Flag::Z, zero);
+            set_flag(Flag::N, false);
+            set_flag(Flag::H, half_carry);
+            return 4;
+        }
 
-
+        
         //* ____LD____
         case 0x3E:
             // LD A, n8     Cycles: 8       Length: 2
@@ -117,6 +172,10 @@ uint16_t Gameboy::emulate_inst() {
         case 0x79:
             // LD A, C  |  Lenght: 1  |  Cycles: 4  |  Flags: - - - - 
             reg.A = reg.C;
+            return 4;
+        case 0x44:
+            // LD B, H  |  Lenght: 1  |  Cycles: 4  |  Flags: - - - - 
+            reg.B = reg.H;
             return 4;
 
         case 0x01:
@@ -150,6 +209,10 @@ uint16_t Gameboy::emulate_inst() {
             // LD [DE], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
             mmu.write(reg.DE, reg.A);
             return 8;
+        case 0x1A:
+            // LD A, [DE]  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
+            reg.A = mmu.read(reg.DE);
+            return 8;
         
         
         case 0xE0: {
@@ -167,6 +230,7 @@ uint16_t Gameboy::emulate_inst() {
         case 0xE2: {
             // LDH [C], A  |  Lenght: 1  |  Cycles: 8  |  Flags: - - - - 
             mmu.write(0xFF00 + reg.C, reg.A);
+            return 8;
         }
         case 0xEA: {
             // LD [a16], A  Cycles: 16      Length: 3
@@ -204,10 +268,19 @@ uint16_t Gameboy::emulate_inst() {
         }
 
         //* ___RET____
+        case 0xC0: 
+            // RET NZ  |  Lenght: 1  |  Cycles: 20/8  |  Flags: - - - - 
+            if(!get_flag(Flag::Z)) {
+                printf("Returned to: %d", pop_word_debug());
+                reg.PC = pop_word();
+                return 20;
+            }
+            return 8;
         case 0xC9: 
             // RET   |  Lenght: 1  |  Cycles: 16  |  Flags: - - - - 
             reg.PC = pop_word();
-            return 24;
+            return 16;
+
 
         default:
                 return 0;

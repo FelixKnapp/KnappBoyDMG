@@ -16,7 +16,7 @@ tabulate::Color get_opcode_color_unprefixed(std::string mnemonic) {
         colour_cell = tabulate::Color::red;
     }
     else if(mnemonic == "NOP") {
-        colour_cell = tabulate::Color::none;
+        colour_cell = tabulate::Color::grey;
     }
     // Jumps / Calls (Orange)
     else if (mnemonic == "JR"  || mnemonic == "JP" || mnemonic == "CALL" ||
@@ -61,8 +61,14 @@ int main(int argc, char** argv) {
     std::string prefix = argv[2];
 
     // TODO: Add Legend
-    if(prefix == "Legend") {
-
+    if(prefix == "Legend" || prefix == "help") {
+        std::cout << YELLOW_BG <<   "Arithmetic / Logical Instructions   " << RESET_COLOUR << std::endl;
+        std::cout << BLUE_BG <<     "Load Instructions                   " << RESET_COLOUR << std::endl;
+        std::cout << MAGENTA_BG <<  "Jumps and Calls                     " << RESET_COLOUR << std::endl;
+        std::cout << RED_BG <<      "Miscellaneous / Control Instructions" << RESET_COLOUR << std::endl;
+        std::cout << GREEN_BG <<    "Stack Based Instructions            " << RESET_COLOUR << std::endl;
+        std::cout << CYAN_BG <<     "Bit Instructions                    " << RESET_COLOUR << std::endl;
+        std::cout << GREY_BG <<     "NOP                                 " << RESET_COLOUR << std::endl;
         return 0;
     }
 
@@ -158,6 +164,9 @@ int main(int argc, char** argv) {
                     }
                 }
             
+            }
+            if(opcode_first_half == 15) {
+                mnemonic += RESET_COLOUR;
             }
             row.insert(row.end(), mnemonic);
         }

@@ -1,13 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <json.hpp>
+#include <colours.hpp>
 
-const std::string RESET_COLOUR = "\033[0m";
-const std::string CYAN = "\033[1;36m";
-const std::string GREEN = "\033[1;32m";
-const std::string BLUE = "\033[1;34m";
-const std::string MAGENTA = "\033[1;35m";
-
+// TODO: Add Link to Output
 int main(int argc, char** argv) {
 
     if (argc != 4) {
@@ -18,9 +14,12 @@ int main(int argc, char** argv) {
     std::string opcode      = argv[3];
 
     int found = opcode.find("0x");
+    std::stringstream opcode_stream;
     if(found == std::string::npos) {
-        opcode.insert(0, "0x");
+        opcode_stream << "0x";
     }
+    opcode_stream << std::uppercase << opcode;
+    opcode = opcode_stream.str();
 
     if(prefix == "help") {
         std::cout << "Flag order: Z N H C" <<  std::endl;
@@ -42,7 +41,8 @@ int main(int argc, char** argv) {
     int bytes = json_data[prefix][opcode]["bytes"];                 // operation length in bytes
     auto cycles_array = json_data[prefix][opcode]["cycles"];        // operation clock cycles in T-Cycles
 
-    std::cout << GREEN << "Mnemonic: " << mnemonic << " ";
+    std::cout << YELLOW_TEXT << "Opcode: "   << opcode   << RESET_COLOUR << "  |  ";
+    std::cout << GREEN_TEXT  << "Mnemonic: " << mnemonic << " ";
 
     // fetch operands
     bool first_run = true;
@@ -94,20 +94,20 @@ int main(int argc, char** argv) {
     std::cout << RESET_COLOUR;
 
 
-    std::cout << "  |  " << CYAN << "Lenght: " << bytes << RESET_COLOUR;
+    std::cout << "  |  " << CYAN_TEXT << "Lenght: " << bytes << RESET_COLOUR;
 
     // check if one or two cycle
     if (cycles_array.size() == 1) {
-        std::cout << "  | " << BLUE <<  " Cycles: " << cycles_array[0];
+        std::cout << "  | " << BLUE_TEXT <<  " Cycles: " << cycles_array[0];
     } else {
-        std::cout << "  | " << BLUE <<  " Cycles: " << cycles_array[0] << "/" << cycles_array[1];
+        std::cout << "  | " << BLUE_TEXT <<  " Cycles: " << cycles_array[0] << "/" << cycles_array[1];
     }
 
     std::string flag_names[] = {
         "Z", "N", "H", "C"
     };
 
-    std::cout << RESET_COLOUR << "  |  " << MAGENTA << "Flags: ";
+    std::cout << RESET_COLOUR << "  |  " << MAGENTA_TEXT << "Flags: ";
     for(uint8_t i = 0; i < 4; i++) {
         std::string flag = json_data[prefix][opcode]["flags"][flag_names[i]];
         std::cout << flag << " ";

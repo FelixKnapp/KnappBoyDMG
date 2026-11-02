@@ -19,6 +19,7 @@
 #define CYAN_BG "\033[46m"
 #define WHITE_BG "\033[47m"
 #define BLACK_BG "\033[40m"
+#define GREY_BG "\033[100m"
 
 // Reset to default
 #define RESET_COLOUR "\033[0m"

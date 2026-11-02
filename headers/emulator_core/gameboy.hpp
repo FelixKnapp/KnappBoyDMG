@@ -29,6 +29,7 @@ class Gameboy {
     uint8_t opcode;
     uint8_t prefixed_opcode;
     uint32_t address;
+    size_t inst_nr{0};
 
     size_t cylces_intern_tima{0};
     size_t cylces_intern_div{0};
@@ -42,6 +43,7 @@ public:
 
 
     // functions
+
     uint16_t emulate_inst();
     void emulate_inst_prefix(uint8_t opcode);
     bool emulate_inst_debug();
@@ -66,6 +68,8 @@ public:
     uint8_t  pop_byte();
     // Pop 16 bit integer value from stack, increment SP by 2 in the process
     uint16_t pop_word();
+    // Pop 16 bit integer value from stack, doesnt affect SP
+    uint16_t pop_word_debug();
     // set flag
     void set_flag(uint8_t flag, bool condition);
     // get flag

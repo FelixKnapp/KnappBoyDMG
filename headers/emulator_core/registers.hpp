@@ -39,10 +39,11 @@ public:
 				unsigned char H;
 			};
 			unsigned short HL;
+
 		};
 	};
 	
 	unsigned short SP;
 	unsigned short PC;
-    bool IME;
+	bool IME;
 };
